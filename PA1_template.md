@@ -34,8 +34,9 @@ s
 
 ![](Figs/unnamed-chunk-2-1.png) 
 
+### Mean daily steps 
+
 ```r
-#Mean daily steps 
 Mean <- mean(daily.steps$steps, na.rm = TRUE)
 Mean
 ```
@@ -44,8 +45,9 @@ Mean
 ## [1] 9354.23
 ```
 
+### Median daily steps
+
 ```r
-#Median daily steps
 Median <- median(daily.steps$steps, na.rm = TRUE)
 Median
 ```
@@ -73,10 +75,37 @@ d <- d + ggtitle("Average Daily Activity Pattern \n Across 61 Days") +
 d
 ```
 
-![](Figs/unnamed-chunk-3-1.png) 
+![](Figs/unnamed-chunk-5-1.png) 
 
+### Five minute interval containing maximum steps
+
+```r
+max.steps <- max(daily.pattern$steps.by.interval)
+max.steps
+```
+
+```
+## [1] 206.1698
+```
+
+```r
+int <- daily.pattern[which(daily.pattern$steps.by.interval == max.steps), 1]
+as.matrix(
+  signif(rbind("min.integer" = int, 
+              "mins" = int * 5, 
+              "hours" = int * 5 / 60), digits = 3)
+)
+```
+
+```
+##             daily.interval
+## min.integer         104.00
+## mins                520.00
+## hours                 8.67
+```
 
 ## Imputing missing values
+To impute missing(NA) values, the mean values by each integer are added as a new variable into data set. Next, the "steps" variable is coppied in as a new variable into data set. Finally the replace function is used to replace the NA values in the new variable with the mean step values by each ingeter.
 
 ```r
 #Calculate and report the total number of missing values in the dataset
@@ -90,14 +119,17 @@ missing.step.intervals
 ```
 
 ```r
-#add a new colomn of mean steps by each interval, repeated for each day
+#add a new variable of mean steps by each interval, repeated for each day
 activity.data$steps.by.interval <- rep(daily.pattern$steps.by.interval, 61)
 #add new colum to be able to replace NA values from steps
 activity.data$replace.na.steps <- activity.data$steps
 #replace NA values in new column with Mean steps for the corresponding interval
 activity.data[,6] <- replace(activity.data[,6], is.na(activity.data[,1]), activity.data[,5])
+```
 
-#test if replaced NA worked
+### Test if replaced NA worked
+
+```r
 all.equal(activity.data[is.na(activity.data$steps),5], #mean step by interval column
           activity.data[is.na(activity.data$steps),6]) #Replaced NA column
 ```
@@ -130,10 +162,11 @@ c <- c  + geom_density(aes(y=..density..)) +
 c
 ```
 
-![](Figs/unnamed-chunk-4-1.png) 
+![](Figs/unnamed-chunk-8-1.png) 
+
+### Mean daily steps - replaced NA's
 
 ```r
-#Mean daily steps - replaced NA's
 Mean.replaced <- mean(daily.steps.replaced.na$steps)
 Mean.replaced
 ```
@@ -141,9 +174,9 @@ Mean.replaced
 ```
 ## [1] 10766.19
 ```
+### Median daily steps - replaced NA's
 
 ```r
-#Median daily steps - replaced NA's
 Median.replaced <- median(daily.steps.replaced.na$steps)
 Median.replaced
 ```
@@ -192,4 +225,4 @@ w <- w + ggtitle("Average Daily Activity Pattern Across 61 Days") +
 w
 ```
 
-![](Figs/unnamed-chunk-5-1.png) 
+![](Figs/unnamed-chunk-11-1.png) 

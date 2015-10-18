@@ -36,12 +36,16 @@ s <- ggplot(data = daily.steps, aes(steps))
 s <- s + geom_histogram(aes(y=..density..), colour = "black", fill = I('#FFF999'))
 s <- s  + geom_density(aes(y=..density..)) + ggtitle("Steps per Day")
 s
+```
 
-#Mean daily steps 
+### Mean daily steps 
+```{r}
 Mean <- mean(daily.steps$steps, na.rm = TRUE)
 Mean
+```
 
-#Median daily steps
+### Median daily steps
+```{r}
 Median <- median(daily.steps$steps, na.rm = TRUE)
 Median
 ```
@@ -64,22 +68,36 @@ d <- d + ggtitle("Average Daily Activity Pattern \n Across 61 Days") +
 d
 ```
 
+### Five minute interval containing maximum steps
+```{r}
+max.steps <- max(daily.pattern$steps.by.interval)
+max.steps
+int <- daily.pattern[which(daily.pattern$steps.by.interval == max.steps), 1]
+as.matrix(
+  signif(rbind("min.integer" = int, 
+              "mins" = int * 5, 
+              "hours" = int * 5 / 60), digits = 3)
+)
+```
 
 ## Imputing missing values
+To impute missing(NA) values, the mean values by each integer are added as a new variable into data set. Next, the "steps" variable is coppied in as a new variable into data set. Finally the replace function is used to replace the NA values in the new variable with the mean step values by each ingeter.
 ```{r}
 #Calculate and report the total number of missing values in the dataset
 nas <- is.na(activity.data$steps)
 missing.step.intervals <- sum(nas)
 missing.step.intervals
 
-#add a new colomn of mean steps by each interval, repeated for each day
+#add a new variable of mean steps by each interval, repeated for each day
 activity.data$steps.by.interval <- rep(daily.pattern$steps.by.interval, 61)
 #add new colum to be able to replace NA values from steps
 activity.data$replace.na.steps <- activity.data$steps
 #replace NA values in new column with Mean steps for the corresponding interval
 activity.data[,6] <- replace(activity.data[,6], is.na(activity.data[,1]), activity.data[,5])
+```
 
-#test if replaced NA worked
+### Test if replaced NA worked
+```{r}
 all.equal(activity.data[is.na(activity.data$steps),5], #mean step by interval column
           activity.data[is.na(activity.data$steps),6]) #Replaced NA column
 
@@ -98,12 +116,15 @@ c <- c + geom_histogram(aes(y=..density..), colour = "black", fill = I('#ccff99'
 c <- c  + geom_density(aes(y=..density..)) + 
   ggtitle("Steps per Day - replaced NA's")
 c
+```
 
-#Mean daily steps - replaced NA's
+### Mean daily steps - replaced NA's
+```{r}
 Mean.replaced <- mean(daily.steps.replaced.na$steps)
 Mean.replaced
-
-#Median daily steps - replaced NA's
+```
+### Median daily steps - replaced NA's
+```{r}
 Median.replaced <- median(daily.steps.replaced.na$steps)
 Median.replaced
 ```
